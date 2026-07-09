@@ -3,7 +3,6 @@
 import argparse
 import shutil
 
-PATH = "/"
 def disk_usage_alert(path, threshold=80):
     # usage returns multiple values.
     usage = shutil.disk_usage(path)
