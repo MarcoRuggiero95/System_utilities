@@ -5,6 +5,6 @@ Scripts to automate routine system tasks. See the table for details.
 
 | Script | Description | Input | Output |
 | :--- | :--- | :--- | :--- |
-| `tail_f.py` | File monitoring | Filepath, Time | It prints added content |
+| `tail_f.py` | File monitoring | Filepath, Time | Periodically, it prints added content |
 | `disk_usage_alert.py` | Checks storage | Path, Threshold | It prints a warning if storage >= threshold |
 
