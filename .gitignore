@@ -1,0 +1,5 @@
+*.tmp      # all .tmp files
+*.log      # all .log files
+log_parsing.py 
+process_finder.py
+syslog_parsing.py
