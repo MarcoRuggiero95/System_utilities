@@ -1,7 +1,7 @@
 # System Utilities
 Scripts to automate routine system tasks. See the table for details.
 
-## 🛠️ Included Scripts
+## Included Scripts
 
 | Script | Description | Input | Output |
 | :--- | :--- | :--- | :--- |
