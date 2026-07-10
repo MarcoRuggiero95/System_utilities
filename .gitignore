@@ -3,4 +3,3 @@
 **/*.tmp      # all .tmp files
 log_parsing.py 
 process_finder.py
-syslog_parsing.py
