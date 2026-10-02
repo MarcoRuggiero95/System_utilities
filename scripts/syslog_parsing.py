@@ -2,10 +2,15 @@
 # and prints the count of lines per log level (ERROR, WARNING, INFO).
 
 import argparse
+import os
 import re 
 
 def parse_log_levels(file_path):
 
+    # Input validation
+    if not os.path.exists(file_path):
+        raise FileNotFoundError("The specified file does not exist.")
+    
     result = {"ERROR":0, "WARNING":0, "INFO":0}
 
     pattern = re.compile(r"\b(ERROR|WARNING|INFO)\b")
@@ -28,15 +33,13 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser(description="A script that parses a log file and counts lines per log level.")
     
     # Arguments to accept
-    parser.add_argument("-f", "--file", required=True, help="The path to the log file.")
+    parser.add_argument("-f", "--file_path", required=True, help="The path to the log file.")
     
     # Parse the arguments from the command line
     args = parser.parse_args() 
 
     try:
-        result = parse_log_levels(args.file)
+        result = parse_log_levels(args.file_path)
         print("Log level counts: "+ str(result))
-    except FileNotFoundError:
-        print("File does not exist")
-    except PermissionError:
-        print("Permission denied to read the file")
+    except FileNotFoundError as e:
+        print("Error: " + str(e))
