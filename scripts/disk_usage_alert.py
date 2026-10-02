@@ -1,10 +1,18 @@
 # A script that checks disk usage on PATH and prints a warning if usage is above a Threshold. 
 
+import os
 import argparse
 import shutil
 
 def disk_usage_alert(path, threshold=80):
-    # usage returns multiple values.
+
+    if threshold < 0 or threshold > 100:
+        raise ValueError("Threshold must be between 0 and 100.")
+
+    if not os.path.exists(path):
+        raise ValueError("The specified path does not exist.")
+
+    # usage returns multiple values.    
     usage = shutil.disk_usage(path)
 
     used = usage.used
@@ -27,5 +35,5 @@ if __name__=="__main__":
 
     try: 
         disk_usage_alert(args.path, args.threshold)
-    except Exception as e:
+    except ValueError as e:
         print("Error: " + str(e))
