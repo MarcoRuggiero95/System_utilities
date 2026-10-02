@@ -20,8 +20,9 @@ def disk_usage_alert(path, threshold=80):
 
     percentage_used = (used/total) * 100
 
+    rounded_percentage_used = round(percentage_used, 2)
     if percentage_used >= threshold:
-        print("Warning: Disk usage is " + str(round(percentage_used,2)) + "%")
+        print("Warning: Disk usage is " + str(rounded_percentage_used) + "%")
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="A script that checks disk usage on PATH and prints a warning if usage is above a Threshold.")
