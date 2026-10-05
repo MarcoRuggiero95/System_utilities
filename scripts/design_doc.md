@@ -1,4 +1,5 @@
 DETECT CLIENT IP
+
 In this section, i want to write specifications related to detect_client_ip script for my agent. <br>
 
 detect_client_ip file must read containing records in key-value format and identify clients generating a high number of HTTP client errors, from 400 to 499 (first and last included).  
