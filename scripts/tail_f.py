@@ -29,8 +29,8 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser(description="A custom Python tail -f clone.")
     
     # Arguments to accept
-    parser.add_argument("-f", "--file_path", required=True, help="The path to the log file you want to monitor.")
-    parser.add_argument("-t", "--time_to_wait", type=int, default=3, help="Seconds to wait between checks (default: 3).")
+    parser.add_argument("-f", "--file_path", "--file-path", required=True, help="The path to the log file you want to monitor.")
+    parser.add_argument("-t", "--time_to_wait", "--time-to-wait", type=int, default=3, help="Seconds to wait between checks (default: 3).")
     
     # Parse the arguments from the command line
     args = parser.parse_args() 
