@@ -22,7 +22,7 @@ MONTHS = (
 )
 HTTP_TOKEN_PUNCTUATION = "!#$%&'*+-.^_`|~"
 
-
+# reads a line with fields in a key value format
 def _read_logfmt(line: str) -> tuple[dict[str, str], bool]:
     fields: dict[str, str] = {}
     malformed = False
@@ -44,7 +44,7 @@ def _read_logfmt(line: str) -> tuple[dict[str, str], bool]:
         fields[field_name] = field_value
     return fields, malformed
 
-
+# Validate individual fields in a log entry
 def _is_valid_field(name: str, value: str) -> bool:
     if name == "ip":
         try:
@@ -155,7 +155,7 @@ def _validate_line(line: str) -> tuple[dict[str, str], set[str], set[str]]:
 
     return fields, missing_fields, malformed_fields
 
-
+# It constructs a record using validated fields 
 def _parse(fields: dict[str, str]) -> dict[str, str | int]:
     """Build a record from fields already accepted by _validate_line()."""
     status_number = int(fields["http_status"])
@@ -168,7 +168,7 @@ def _parse(fields: dict[str, str]) -> dict[str, str | int]:
         "request_id": fields["request_id"],
     }
 
-
+# Reads log file and returns parsed records and stats about invalid entries
 def _read_log_file(file_path: str | Path) -> tuple[list[dict[str, str | int]], dict[str, int]]:
     records: list[dict[str, str | int]] = []
     stats = {
@@ -195,7 +195,7 @@ def _ip_error_sort_key(ip_result: tuple[str, int]) -> tuple[int, str]:
     ip_address, error_count = ip_result
     return -error_count, ip_address
 
-
+# Outputs the top n client IP addresses that at least meet the error threshold
 def detect_client_ip(
     records: Iterable[dict[str, str | int]], threshold: int = 1, top_n: int = 1
 ) -> dict[str, int]:
