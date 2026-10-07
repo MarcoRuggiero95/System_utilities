@@ -206,7 +206,7 @@ def detect_client_ip(
 
     error_counts: dict[str, int] = {}
     for record in records:
-        ip_address = str(record["ip"])
+        ip_address = ipaddress.ip_address(str(record["ip"])).compressed
         if ip_address not in error_counts:
             error_counts[ip_address] = 0
 
