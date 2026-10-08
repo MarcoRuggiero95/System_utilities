@@ -7,7 +7,6 @@ Scripts to automate routine system tasks. See the table for details.
 | :--- | :--- | :--- | :--- |
 | `tail_f.py` | Monitors a file for appended content, starting at the current end of the file | File path (required), polling interval in seconds (default: 3) | Prints new content as it is appended; stop with `Ctrl+C` |
 | `disk_usage_alert.py` | Checks disk usage for a path (default: `/`) against a percentage threshold (default: 80) | `--path`, `--threshold` (0-100) | Prints a warning when usage is greater than or equal to the threshold |
-| `syslog_parsing.py` | Log parsing looking for log level | Filepath | It prints number of occurences per log level (ERROR, WARNING, INFO) |
 | `detect_client_ip.py` | Counts HTTP client errors (status 400-499) per IP and selects the top results meeting the threshold | Log file (required), `--threshold` (default: 1), `--top-n` (default: 1) | Prints entry validation counts and matching IP addresses with their 4xx error counts |
 
 ## How to execute
