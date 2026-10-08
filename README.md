@@ -23,4 +23,4 @@ py .\scripts\disk_usage_alert.py --path C:\ --threshold 80
 py .\scripts\detect_client_ip.py --file-path .\access.log --threshold 3 --top-n 5
 ```
 
-`detect_client_ip.py` expects one logfmt record per line with `ip`, `timestamp`, `method`, `path`, `http_status`, and `request_id` fields. Malformed records and records missing required fields are excluded from the results and included in the printed validation counts.
+`detect_client_ip.py` expects one logfmt record per line with `ip`, `timestamp`, `method`, `path`, `http_status`, and `request_id` fields. Malformed records and records missing required fields are excluded from the results and included in the printed validation counts. 
