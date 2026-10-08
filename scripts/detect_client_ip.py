@@ -22,6 +22,10 @@ MONTHS = (
 )
 HTTP_TOKEN_PUNCTUATION = "!#$%&'*+-.^_`|~"
 
+
+Record = dict[str, str | int | dict[str, str]]
+
+
 # reads a line with fields in a key value format
 def _read_logfmt(line: str) -> tuple[dict[str, str], bool]:
     fields: dict[str, str] = {}
@@ -156,7 +160,7 @@ def _validate_line(line: str) -> tuple[dict[str, str], set[str], set[str]]:
     return fields, missing_fields, malformed_fields
 
 # It constructs a record using validated fields 
-def _parse(fields: dict[str, str]) -> dict[str, str | int]:
+def _parse(fields: dict[str, str]) -> Record:
     """Build a record from fields already accepted by _validate_line()."""
     status_number = int(fields["http_status"])
     return {
@@ -166,11 +170,16 @@ def _parse(fields: dict[str, str]) -> dict[str, str | int]:
         "path": fields["path"],
         "http_status": status_number,
         "request_id": fields["request_id"],
+        "extra": {
+            field_name: field_value
+            for field_name, field_value in fields.items()
+            if field_name not in REQUIRED_FIELDS
+        },
     }
 
 # Reads log file and returns parsed records and stats about invalid entries
-def _read_log_file(file_path: str | Path) -> tuple[list[dict[str, str | int]], dict[str, int]]:
-    records: list[dict[str, str | int]] = []
+def _read_log_file(file_path: str | Path) -> tuple[list[Record], dict[str, int]]:
+    records: list[Record] = []
     stats = {
         "total_entries": 0,
         "missing_field_entries": 0,
@@ -197,7 +206,7 @@ def _ip_error_sort_key(ip_result: tuple[str, int]) -> tuple[int, str]:
 
 # Outputs the top n client IP addresses that at least meet the error threshold
 def detect_client_ip(
-    records: Iterable[dict[str, str | int]], threshold: int = 1, top_n: int = 1
+    records: Iterable[Record], threshold: int = 1, top_n: int = 1
 ) -> dict[str, int]:
     if threshold < 0:
         raise ValueError("threshold must be non-negative")

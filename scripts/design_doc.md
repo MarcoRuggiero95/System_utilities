@@ -20,6 +20,7 @@ Each item of the parsed collection is a dictionary with the following fields:
 - path 
 - http_status
 - request_id
+- extra: a dictionary containing any other key-value fields from the input line
 
 Therefore, each key-value line of the file must be validate in order to verify: a line from the input is counted as valid only if all required fields are present and valid. Required fields must be valid according to their own semantic: eg a valid ip. 
 When a line overcomes the previous checks, a parse() function must parse it and add it to the collection: parse() should only operate on an already-validated line.
