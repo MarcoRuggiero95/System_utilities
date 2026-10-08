@@ -2,11 +2,11 @@
 
 In this section, i want to write specifications related to detect_client_ip script for my agent. <br>
 
-detect_client_ip file must read containing records in key-value format and identify clients generating a high number of HTTP client errors, from 400 to 499 (first and last included).  
+The `log_parser.py` module reads records in key-value format, validates them, and returns parsed records. The `detect_client_ip.py` script consumes those records and identifies clients generating a high number of HTTP client errors, from 400 to 499 (first and last included).
 
 ### SCRIPT INPUT
 
-Each line of the input file represents one record in key-value Logfmt format.
+Each line of the input file represents one record in key-value Logfmt format. Parsing and validation are owned by `log_parser.py`; IP error detection is owned by `detect_client_ip.py`.
 The following an example of valid input line: 
 
 ip=10.0.0.15 timestamp=04/Jun/2026:22:48:13 method=GET path=/v1/login http_status=404 request_id=3245

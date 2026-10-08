@@ -1,5 +1,6 @@
 **/*.log      # all .log files
 *.log
 **/*.tmp      # all .tmp files
+__pycache__/
 log_parsing.py 
 process_finder.py
