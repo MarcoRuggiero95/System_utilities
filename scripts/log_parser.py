@@ -2,7 +2,7 @@ import ipaddress
 import shlex
 from datetime import datetime
 from pathlib import Path
-from typing import TypeAlias
+from typing import Iterator, TypeAlias
 
 REQUIRED_FIELDS = (
     "ip",
@@ -165,15 +165,19 @@ def _parse(fields: dict[str, str]) -> Record:
     }
 
 
-def read_log_file(file_path: str | Path) -> tuple[list[Record], dict[str, int]]:
-    """Parse valid logfmt records and return counts for invalid entries."""
-    records: list[Record] = []
+def read_log_file(file_path: str | Path) -> tuple[Iterator[Record], dict[str, int]]:
+    """Yield valid logfmt records and update entry counts as the file is read."""
     stats = {
         "total_entries": 0,
         "missing_field_entries": 0,
         "malformed_entries": 0,
     }
+    return _iter_records(file_path, stats), stats
 
+
+def _iter_records(
+    file_path: str | Path, stats: dict[str, int]
+) -> Iterator[Record]:
     with Path(file_path).open("r", encoding="utf-8") as log_file:
         for line in log_file:
             stats["total_entries"] += 1
@@ -184,5 +188,4 @@ def read_log_file(file_path: str | Path) -> tuple[list[Record], dict[str, int]]:
                 stats["malformed_entries"] += 1
             if missing or malformed:
                 continue
-            records.append(_parse(fields))
-    return records, stats
+            yield _parse(fields)

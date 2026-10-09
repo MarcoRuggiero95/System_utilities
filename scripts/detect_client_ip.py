@@ -6,30 +6,22 @@ from pathlib import Path
 from typing import Iterable
 from log_parser import Record, read_log_file
 
-
-def _ip_error_sort_key(ip_result: tuple[str, int]) -> tuple[int, str]:
-    ip_address, error_count = ip_result
-    return -error_count, ip_address
-
 # Outputs the top n client IP addresses that at least meet the error threshold
 def detect_client_ip(
     records: Iterable[Record], threshold: int = 1, top_n: int = 1
 ) -> dict[str, int]:
-    if threshold < 0:
-        raise ValueError("threshold must be non-negative")
+    if threshold < 1:
+        raise ValueError("threshold must be at least 1")
     if top_n < 1:
         raise ValueError("top_n must be at least 1")
 
     error_counts: dict[str, int] = {}
     for record in records:
-        ip_address = ipaddress.ip_address(str(record["ip"])).compressed
-        if ip_address not in error_counts:
-            error_counts[ip_address] = 0
-
         status = int(record["http_status"])
         is_client_error = 400 <= status <= 499
         if is_client_error:
-            error_counts[ip_address] += 1
+            ip_address = ipaddress.ip_address(str(record["ip"])).compressed
+            error_counts[ip_address] = error_counts.get(ip_address, 0) + 1
 
     selected_ips = []
     for ip_address, error_count in error_counts.items():
@@ -42,13 +34,15 @@ def detect_client_ip(
     top_ips = selected_ips[:top_n]
     return dict(top_ips)
 
+def _ip_error_sort_key(ip_result: tuple[str, int]) -> tuple[int, str]:
+    ip_address, error_count = ip_result
+    return -error_count, ip_address
 
 def _existing_file(value: str) -> str:
     path = Path(value)
     if not path.is_file():
         raise argparse.ArgumentTypeError("must be an existing file")
     return value
-
 
 def _non_negative_integer(value: str) -> int:
     try:
@@ -81,7 +75,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-t",
         "--threshold",
-        type=_non_negative_integer,
+        type=_positive_integer,
         default=1,
         help="Minimum number of 4xx errors required (default: 1)",
     )

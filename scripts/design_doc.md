@@ -2,7 +2,7 @@
 
 In this section, i want to write specifications related to detect_client_ip script for my agent. <br>
 
-The `log_parser.py` module reads records in key-value format, validates them, and returns parsed records. The `detect_client_ip.py` script consumes those records and identifies clients generating a high number of HTTP client errors, from 400 to 499 (first and last included).
+The `log_parser.py` module reads records in key-value format, validates them, and yields parsed records. The `detect_client_ip.py` script consumes those records and identifies clients generating a high number of HTTP client errors, from 400 to 499 (first and last included).
 
 ### SCRIPT INPUT
 
@@ -13,7 +13,7 @@ ip=10.0.0.15 timestamp=04/Jun/2026:22:48:13 method=GET path=/v1/login http_statu
 
 ### PARSER OUTPUT
 
-Each item of the parsed collection is a dictionary with the following fields:
+Each item of the yielded records is a dictionary with the following fields:
 - ip 
 - timestamp
 - method
@@ -22,12 +22,14 @@ Each item of the parsed collection is a dictionary with the following fields:
 - request_id
 - extra: a dictionary containing any other key-value fields from the input line
 
-Therefore, each key-value line of the file must be validate in order to verify: a line from the input is counted as valid only if all required fields are present and valid. Required fields must be valid according to their own semantic: eg a valid ip. 
-When a line overcomes the previous checks, a parse() function must parse it and add it to the collection: parse() should only operate on an already-validated line.
+Each input line must be validated before it is counted as a valid record. All required fields must be present and valid according to their meaning, such as a valid IP address.
+
+### FLOW
+The instruction flow calls `read_log_file` once to create and return an iterator of records plus a statistics dictionary. Creating the iterator does not read the file; file reading begins when `detect_client_ip` starts iterating over it. `detect_client_ip` is called once, and its `for record in records` loop requests one record at a time. The parser reads and validates lines until it finds a valid one, then `yield` returns that record and pauses the parser. The loop body processes that record; when the loop requests another, the parser resumes immediately after `yield` and continues with the next line. This producer-consumer cycle repeats until the file ends. Invalid lines are skipped and counted, not yielded.  Thus, parsed records are processed one at a time rather than accumulated in memory.
 
 ### SCRIPT OUTPUT
 
-The collection is then scanned by detect_client_ip function. This one saves in a collection the ips which have a number of client error bigger or equal than a threshold. These items must be sorted in descending order. Then top N ips with most number of errors are printed. also numeber of errors associated to the selected ip must be printed. 
+Streamed records are then consumed by detect_client_ip function.  This one saves in a collection the distinct ips which have a number of client error bigger or equal than a threshold. In this way, memory usage is proportional to the number of distinct IPs. The items must be sorted in descending order. Then top N ips with most number of errors are printed. Also number of errors associated to the selected ip must be printed. 
 
 ### LINES NOT RESPECTING THE FORMAT
 
@@ -51,6 +53,6 @@ The following parameters must be configurable:
 - threshold: mimimum number of client errors required for an IP to be selected, default 1
 - N: maximum number of IP addresses to print, default 1
 Validation rules for the configuration parameters:
-- threshold: non negative, it applies to valid lines. 
+- threshold: bigger or equal 1, it applies to valid lines. 
 - path to the log file: it mus t be an existing path
 - N: bigger or equal 1
