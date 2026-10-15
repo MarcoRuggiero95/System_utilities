@@ -1,3 +1,6 @@
+## QUALITY RULES
+The implementation must be small and easy to understand. Don't settle for the first thing that comes to mind, try to find the most minimal and better working design. Don't introduce slop: very fragile code that just patches specific cases, dead code, useless code and code ways more complicated of how it should be.
+
 ## DETECT CLIENT IP
 
 In this section, i want to write specifications related to detect_client_ip script for my agent. <br>
@@ -56,3 +59,26 @@ Validation rules for the configuration parameters:
 - threshold: bigger or equal 1, it applies to valid lines. 
 - path to the log file: it mus t be an existing path
 - N: bigger or equal 1
+
+## TAIL_F
+
+In this section, i want to write specifications related to tail_f script for my agent. <br>
+
+The `tail_f.py` module periodically monitors and displays new lines appended to a file. 
+
+- keep the interface equal to unix system tail -f
+
+### SCRIPT INPUT
+
+### SCRIPT OUTPUT
+
+### CONFIGURATION
+
+The following parameters must be configurable: 
+- path to the log file 
+- N: last N lines of the file are displayed, default 0. If is N is 0, then only new lines are displayed
+- t: time to wait before the file is monitored again
+Validation rules for the configuration parameters:
+- path to the log file: it must be an existing path
+- N: bigger or equal 0
+- t: floating value, greater than 0. 
