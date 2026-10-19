@@ -1,5 +1,7 @@
 ## QUALITY RULES
-The implementation must be small and easy to understand. Don't settle for the first thing that comes to mind, try to find the most minimal and better working design. Don't introduce slop: very fragile code that just patches specific cases, dead code, useless code and code ways more complicated of how it should be.
+The implementation must be small and easy to understand. Don't settle for the first thing that comes to mind, try to find the most minimal and better working design. Don't introduce slop: very fragile code that just patches specific cases, dead code, useless code and code ways more complicated of how it should be. <br>
+
+Keep the code coeherent between the scripts. This includes input and output naming too, input validation. Input variables are provided through `argparse`.
 
 ## DETECT CLIENT IP
 
@@ -66,19 +68,45 @@ In this section, i want to write specifications related to tail_f script for my 
 
 The `tail_f.py` module periodically monitors and displays new lines appended to a file. 
 
-- keep the interface equal to unix system tail -f
-
 ### SCRIPT INPUT
+The path of the file is taken as an input. If multiple paths are provided, precede each with a header giving the file name. 
+
+### FLOW
+The instruction flow is made out of two phases: 
+- `initial mode`
+- `follow mode`
+
+In `initial mode`, last N lines of the file are displayed. After that, `follow mode` happens: each period t, file is checked and then appended data is sent to output. When multiple paths are provided, during `initial mode` last N lines of each provided file is sent to output. Then, during `follow mode` each period t files are checked to output new data, if any. 
+- If during follow mode monitored file is renamed, then the script must  detect that the path now refers to a different file, reopen it, and read from the beginning. Because of file renaming or deletion, then file may become unavailable. The scripts must still try to read according to period t. 
+- During follow mode file truncation must be handled. if a file is truncated, then handle the tracking of end of the file consequently and then output newly appended data. 
 
 ### SCRIPT OUTPUT
+
+Output appended data as the file grows. 
+
+The following is an example of output 
+
+```powershell
+Monitoring file1:
+output file1 appended data
+
+Monitoring file2:
+output file2 appended data
+
+Monitoring file1:
+output file1 appended data
+
+Monitoring file3: ### in follow mode only new data are sent to ouput
+output file3 appended data
+```
 
 ### CONFIGURATION
 
 The following parameters must be configurable: 
-- path to the log file 
+- path to the file 
 - N: last N lines of the file are displayed, default 0. If is N is 0, then only new lines are displayed
 - t: time to wait before the file is monitored again
 Validation rules for the configuration parameters:
-- path to the log file: it must be an existing path
-- N: bigger or equal 0
-- t: floating value, greater than 0. 
+- path to the log file: it must be an existing path. Required.
+- N: bigger or equal 0, default 0. 
+- t: floating value, greater than 0. Required
