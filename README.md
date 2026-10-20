@@ -5,7 +5,7 @@ Scripts to automate routine system tasks. See the table for details.
 
 | Script | Description | Input | Output |
 | :--- | :--- | :--- | :--- |
-| `tail_f.py` | Monitors a file for appended content, starting at the current end of the file | File path (required), polling interval in seconds (default: 3) | Prints new content as it is appended; stop with `Ctrl+C` |
+| `tail_f.py` | Displays the last N lines, then monitors one or more files for appended content, replacement, and truncation | File path(s) (required), `--lines` (default: 0), `--time-to-wait` (required, greater than 0) | Prints initial and appended content with file headers; stop with `Ctrl+C` |
 | `disk_usage_alert.py` | Checks disk usage for a path (default: `/`) against a percentage threshold (default: 80) | `--path`, `--threshold` (0-100) | Prints a warning when usage is greater than or equal to the threshold |
 | `detect_client_ip.py` | Counts HTTP client errors (status 400-499) per IP and selects the top results meeting the threshold | Log file (required), `--threshold` (default: 1), `--top-n` (default: 1) | Prints entry validation counts and matching IP addresses with their 4xx error counts |
 
@@ -13,8 +13,9 @@ Scripts to automate routine system tasks. See the table for details.
 Run scripts from the repository root with `py .\scripts\script_name.py`. For example:
 
 ```powershell
-# Monitor appended lines; poll every 3 seconds by default
-py .\scripts\tail_f.py --file-path .\app.log --time-to-wait 3
+# Show the last 10 lines, then poll one or more files every 0.5 seconds
+py .\scripts\tail_f.py --file-path .\app.log --lines 10 --time-to-wait 0.5
+py .\scripts\tail_f.py --file-path .\app.log .\worker.log --time-to-wait 0.5
 
 # Warn when the disk containing the given path is at least 80% full
 py .\scripts\disk_usage_alert.py --path C:\ --threshold 80
