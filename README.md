@@ -27,5 +27,5 @@ py .\scripts\detect_client_ip.py --file-path .\access.log --threshold 3 --top-n 
 # Find running PowerShell processes and display their PIDs and memory usage
 py .\scripts\process_finder.py --process-name powershell.exe
 ```
-
+ 
 `detect_client_ip.py` expects one logfmt record per line with `ip`, `timestamp`, `method`, `path`, `http_status`, and `request_id` fields. Malformed records and records missing required fields are excluded from the results and included in the printed validation counts. 
